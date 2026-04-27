@@ -1,0 +1,45 @@
+<!-- Declaration to use HTML5 -->
+<!DOCTYPE html>
+<!-- Declaration for text content is english -->
+<html lang="en">
+<!-- head tag -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE COOP</title>
+<!-- fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">  
+<!-- CSS FILE -->
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+<!-- header (icon removed from here) -->
+        <div class="header">
+            <div class="main-title">THE COOP</div>
+            <p class="banner">Main Menu</p></div>
+<!-- main menu start - with icon INSIDE the button -->
+        <div class="zone-card hatch-start" onclick="startGame()">
+            <div class="zone-icon">🐣</div>
+            START </div>
+<!-- about credits and MENU buttons -->
+        <div class="footer">
+<!-- about and credits group -->
+            <div class="about-credit-group">
+                <a onclick="hatchShowAbout()" class="hatch-footer-link">[ ABOUT ]</a>
+                <a onclick="hatchShowCredits()" class="hatch-footer-link">[ CREDITS ]</a></div>
+<!-- MENU returns to main coop screen -->
+            <a onclick="returnToMainMenu()" class="menu-link">[ MENU ]</a>
+        </div>
+        
+<!-- Main page tab at the bottom -->
+        <div class="main-page-tab">
+            <a onclick="goToMainPage()" class="main-page-link">RETURN TO MAIN WEBSITE</a>
+        </div>
+    </div>
+<!-- JS file -->
+    <script src="../js/main.js"></script>
+</body>
+</html>

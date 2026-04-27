@@ -1,0 +1,63 @@
+<!-- Declaration -->
+<!DOCTYPE html>
+<!-- Dec. english -->
+<html lang="en">
+<!-- head tag -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hatch Hack Hash</title>
+<!-- establish connection to google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<!-- CSS file -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+<!-- header pop out -->
+        <div class="header">
+            <div class="main-title">
+                <span>H</span><span>A</span><span>T</span><span>C</span><span>H</span>
+                <span>-</span>
+                <span>H</span><span>A</span><span>C</span><span>K</span>
+                <span>-</span>
+                <span>H</span><span>A</span><span>S</span><span>H</span></div>
+<!-- rotating banner -->
+            <div class="rotating-banner" id="rotatingBanner">
+                HATCH - RAISE YOUR CHICKEN. FACE THE CONSEQUENCES. </div>
+        </div>
+<!-- zones grid -->
+        <div class="zones-grid">
+<!-- THE COOP: HATCH - Links to the-coop.html -->
+            <a href="hatch/the-coop.html" class="zone-card" data-zone="hatch">
+                <div class="zone-icon">🐣</div>
+                <div class="zone-title">THE COOP: HATCH</div>
+                <div class="zone-desc">Hatch. Feed. Choose.</div>
+                <div class="zone-status">RAISE YOUR CHICKEN</div>
+                <div class="easter-hint">> secret: "feed" in terminal</div></a>
+<!-- THE TERMINAL: HACK - links to the-terminal.html -->
+            <a href="hack/the-terminal.html" class="zone-card" data-zone="hack">
+                <div class="zone-icon">⌨️</div>
+                <div class="zone-title">THE TERMINAL: HACK</div>
+                <div class="zone-desc">Type. Explore. Discover.</div>
+                <div class="zone-status">5+ COMMANDS</div>
+                <div class="easter-hint">> try "rain"</div></a>
+<!-- CIPHER DEN: HASH - Links to cipher-den.html -->
+            <a href="hash/cipher-den.html" class="zone-card" data-zone="hash">
+                <div class="zone-icon">🔐</div>
+                <div class="zone-title">CIPHER DEN: HASH</div>
+                <div class="zone-desc">Encode. Decode. Crack.</div>
+                <div class="zone-status">BREAK THE CIPHER</div>
+                <div class="easter-hint">> high score: --</div></a>
+        </div>
+<!-- footer with links -->
+        <div class="footer">
+            <div class="footer-links">
+                <a onclick="showAbout()">[ ABOUT ]</a>
+                <a onclick="showCredits()">[ CREDITS ]</a>
+                <a onclick="resetGame()">[ RESET ]</a></div></div>
+	</div>
+<!-- JavaScript -->
+<script src="js/main.js"></script></body></html>
