@@ -396,9 +396,7 @@ function loadGlobalTheme() {
     const savedTheme = localStorage.getItem('globalTheme');
     if (savedTheme && THEMES[savedTheme]) {
         currentGlobalTheme = savedTheme;
-    } else {
-        currentGlobalTheme = 'green';
-    }
+    } else {currentGlobalTheme = 'green';}
     return currentGlobalTheme;}
 function saveGlobalTheme(themeName) {
     localStorage.setItem('globalTheme', themeName);
