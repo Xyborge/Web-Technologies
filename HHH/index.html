@@ -13,8 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <!-- CSS file -->
     <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+</head><body>
     <div class="container">
 <!-- header pop out -->
         <div class="header">
@@ -26,8 +25,7 @@
                 <span>H</span><span>A</span><span>S</span><span>H</span></div>
 <!-- rotating banner -->
             <div class="rotating-banner" id="rotatingBanner">
-                HATCH - RAISE YOUR CHICKEN. FACE THE CONSEQUENCES. </div>
-        </div>
+                HATCH - RAISE YOUR CHICKEN. FACE THE CONSEQUENCES.</div></div>
 <!-- zones grid -->
         <div class="zones-grid">
 <!-- THE COOP: HATCH - Links to the-coop.html -->
@@ -43,21 +41,63 @@
                 <div class="zone-title">THE TERMINAL: HACK</div>
                 <div class="zone-desc">Type. Explore. Discover.</div>
                 <div class="zone-status">5+ COMMANDS</div>
-                <div class="easter-hint">> try "rain"</div></a>
+                <div class="easter-hint">> try "theme" to change colors across ALL zones!</div></a>
 <!-- CIPHER DEN: HASH - Links to cipher-den.html -->
             <a href="hash/cipher-den.html" class="zone-card" data-zone="hash">
                 <div class="zone-icon">🔐</div>
                 <div class="zone-title">CIPHER DEN: HASH</div>
                 <div class="zone-desc">Encode. Decode. Crack.</div>
                 <div class="zone-status">BREAK THE CIPHER</div>
-                <div class="easter-hint">> high score: --</div></a>
-        </div>
+                <div class="easter-hint">> high score: --</div></a></div>
 <!-- footer with links -->
         <div class="footer">
             <div class="footer-links">
                 <a onclick="showAbout()">[ ABOUT ]</a>
                 <a onclick="showCredits()">[ CREDITS ]</a>
-                <a onclick="resetGame()">[ RESET ]</a></div></div>
-	</div>
+                <a onclick="resetGame()">[ RESET ]</a></div></div></div>
 <!-- JavaScript -->
-<script src="js/main.js"></script></body></html>
+<script src="js/main.js"></script><script>
+// Apply saved theme to main page (only needs to update theme, not redefine functions)
+    function applyThemeToMainPage() {
+        const themeName = loadGlobalTheme();
+        const themeColor = themeName === 'green' ? '#33ff33' : '#ff6600';
+        const themeGlow = themeName === 'green' ? '#33ff33' : '#ff6600';
+        document.documentElement.style.setProperty('--theme-color', themeColor);
+        document.documentElement.style.setProperty('--theme-glow', themeGlow);
+// Update container
+        const container = document.querySelector('.container');
+        if (container) {
+            container.style.borderColor = themeColor;
+            container.style.boxShadow = `0 0 20px ${themeGlow}, inset 0 0 10px ${themeGlow}`;}
+// Update rotating banner
+        const banner = document.querySelector('.rotating-banner');
+        if (banner) {
+            banner.style.borderTopColor = themeColor;
+            banner.style.borderBottomColor = themeColor;
+            banner.style.color = themeColor;}
+// Update all zone cards
+        const cards = document.querySelectorAll('.zone-card');
+        cards.forEach(card => {
+            card.style.borderColor = themeColor;});
+// Update footer links
+        const links = document.querySelectorAll('.footer-links a');
+        links.forEach(link => {
+            link.style.borderBottomColor = themeColor;
+            link.style.color = themeColor;});
+// Update main title
+        const title = document.querySelector('.main-title');
+        if (title) {
+            title.style.textShadow = `0 0 5px ${themeColor}`;
+            const spans = title.querySelectorAll('span');
+            spans.forEach(span => {
+            span.style.color = themeColor;});}
+// Update zone status badges
+        const statuses = document.querySelectorAll('.zone-status');
+        statuses.forEach(status => {
+            status.style.borderColor = themeColor;
+            status.style.color = themeColor;});}
+// Apply theme when page loads
+    window.addEventListener('DOMContentLoaded', () => {
+        loadGlobalTheme();
+        applyThemeToMainPage();});
+</script></body></html>
