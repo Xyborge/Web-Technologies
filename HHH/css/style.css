@@ -1,5 +1,4 @@
 /* css/style.css */
-/* Reset & Global Styles */
 * { 
     margin: 0;
     padding: 0;
@@ -16,7 +15,9 @@ body {
     padding: 20px;
     position: relative;
     overflow-x: hidden;}
-/* CRT Scanline effect on site */
+:root {
+    --theme-color: #33ff33;
+    --theme-glow: #33ff33;}
 body::before { 
     content: "";
     position: fixed;
@@ -31,40 +32,35 @@ body::before {
         transparent 3px);
     pointer-events: none;
     z-index: 100;}
-/* CRT flicker animation */
 @keyframes flicker {
     0% { opacity: 1; }
     50% { opacity: 0.95; }
     100% { opacity: 1; }}
-/* Main terminal container */
 .container {
     max-width: 1000px;
     width: 100%;
     background-color: #000000;
-    border: 4px solid #33ff33;
-    box-shadow: 0 0 20px #33ff33, inset 0 0 10px #33ff33;
+    border: 4px solid var(--theme-color);
+    box-shadow: 0 0 20px var(--theme-glow), inset 0 0 10px var(--theme-glow);
     padding: 30px 20px;
     position: relative;
     animation: flicker 0.15s infinite;}
-/* Header */
 .header {
-    border-bottom: 2px solid #33ff33;
     padding-bottom: 20px;
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;}
-/* Main title */
+    text-align: center;
+    border-bottom: none;}
 .main-title {
     font-family: 'Press Start 2P', cursive;
     font-size: clamp(1.8rem, 6vw, 2.5rem);
-    color: #33ff33;
-    text-shadow: 0 0 5px #33ff33;
+    color: var(--theme-color);
+    text-shadow: 0 0 5px var(--theme-color);
     margin-bottom: 15px;
     line-height: 1.4;
     letter-spacing: 2px;}
-/* Individual letter spans for hovereffect */
 .main-title span {
     display: inline-block;
     transition: transform 0.3s ease;}
@@ -72,47 +68,42 @@ body::before {
     transform: scale(1.2);
     color: #66ff66;
     text-shadow: 0 0 10px #66ff66;}
-/* Rotating banner */
 .rotating-banner {
-    color: #33ff33;
+    color: var(--theme-color);
     font-family: 'VT323', monospace;
     font-size: 1.5rem;
     text-align: center;
     margin: 10px 0 0;
     padding: 8px 0;
-    border-top: 1px dashed #33ff33;
-    border-bottom: 1px dashed #33ff33;
+    border-top: 1px dashed var(--theme-color);
+    border-bottom: 1px dashed var(--theme-color);
     background: #050505;
     letter-spacing: 2px;
     width: 100%;}
-/* main zone grid */
 .zones-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 25px;
     margin: 40px 0 30px;}
-/* Zone card styling */
 .zone-card {
     background-color: #0a0a0a;
-    border: 3px solid #33ff33;
+    border: 3px solid var(--theme-color);
     padding: 25px 15px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
     text-decoration: none;
-    color: #33ff33;
+    color: var(--theme-color);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 15px;}
-/* Universal hover effect */
 .zone-card:hover {
     background-color: #1a1a1a;
     border-color: #66ff66;
     transform: scale(1.05);
-    box-shadow: 0 0 30px #33ff33;
+    box-shadow: 0 0 30px var(--theme-glow);
     z-index: 10;}
-/* Zone specific hover colors */
 .zone-card[data-zone="hatch"]:hover {
     border-color: #ffaa33;
     box-shadow: 0 0 30px #ffaa33;
@@ -125,50 +116,44 @@ body::before {
     border-color: #aa33ff;
     box-shadow: 0 0 30px #aa33ff;
     transform: scale(1.05);}
-/* Zone icon - with hover effect */
 .zone-icon {
     font-size: 4rem;
-    filter: drop-shadow(0 0 5px #33ff33);
+    filter: drop-shadow(0 0 5px var(--theme-color));
     transition: transform 0.3s ease;}
 .zone-card:hover .zone-icon {
     transform: scale(1.1);
     filter: drop-shadow(0 0 8px currentColor);}
-/* Zone title */
 .zone-title {
     font-family: 'Press Start 2P', cursive;
     font-size: 1.2rem;
-    color: #33ff33;
+    color: var(--theme-color);
     margin: 10px 0 5px;}
-/* Zone description */
 .zone-desc {
     font-size: 1.3rem;
-    color: #33ff33;
+    color: var(--theme-color);
     opacity: 0.9;
     line-height: 1.4;}
-/* Zone status */
 .zone-status {
     margin-top: 15px;
     font-family: 'Press Start 2P', cursive;
     font-size: 0.7rem;
     padding: 5px 10px;
-    border: 1px solid #33ff33;
+    border: 1px solid var(--theme-color);
     width: fit-content;
     margin-left: auto;
-    margin-right: auto;}
-/* Easter egg hint - fades in on hover */
+    margin-right: auto;
+    color: var(--theme-color);}
 .easter-hint {
     font-size: 0.8rem;
-    color: #33ff33;
+    color: var(--theme-color);
     opacity: 0;
     transition: opacity 0.3s ease;
     margin-top: 8px;
-    border-top: 1px dotted #33ff33;
-    padding-top: 8px;}
+    padding-top: 8px;
+    border-top: none;}
 .zone-card:hover .easter-hint {
     opacity: 0.9;}
-/* Footer */
 .footer {
-    border-top: 2px solid #33ff33;
     padding-top: 20px;
     margin-top: 20px;
     display: flex;
@@ -176,16 +161,16 @@ body::before {
     align-items: center;
     font-family: 'VT323', monospace;
     font-size: 1.3rem;
-    color: #33ff33;
-    gap: 30px;}
-/* Footer links */
+    color: var(--theme-color);
+    gap: 30px;
+    border-top: none;}
 .footer-links {
     display: flex;
     gap: 30px;}
 .footer-links a {
-    color: #33ff33;
+    color: var(--theme-color);
     text-decoration: none;
-    border-bottom: 1px dashed #33ff33;
+    border-bottom: 1px dashed var(--theme-color);
     cursor: pointer;
     transition: all 0.3s ease;
     padding: 0 2px;
@@ -194,7 +179,6 @@ body::before {
     color: #66ff66;
     border-bottom: 1px solid #66ff66;
     transform: scale(1.1);}
-/* Responsive */
 @media (max-width: 600px) {
     .container { padding: 15px; }
     .zone-title { font-size: 1rem; }
@@ -202,111 +186,100 @@ body::before {
     .footer { flex-direction: column; }
     .footer-links { gap: 20px; }
     .rotating-banner { font-size: 1.2rem;}}
-/* Banner styling for HATCH */
 .banner {
-    color: #33ff33;
+    color: var(--theme-color);
     font-family: 'Press Start 2P', cursive;
     font-size: 1rem;
     text-align: center;
     margin-top: 10px;
-    text-shadow: 0 0 5px #33ff33;
+    text-shadow: 0 0 5px var(--theme-color);
     line-height: 1.5;}
-/* START button styling for HATCH - matching main menu */
 .hatch .zone-card,
 .zone-card.hatch-start {
     background-color: #0a0a0a;
-    border: 3px solid #33ff33;
+    border: 3px solid var(--theme-color);
     padding: 25px 15px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
     text-decoration: none;
-    color: #33ff33;
+    color: var(--theme-color);
     display: flex;
     flex-direction: column;
     align-items: center;
     font-family: 'Press Start 2P', cursive;
     font-size: 1.8rem;
     letter-spacing: 4px;
-    box-shadow: 0 0 15px #33ff33 inset, 0 0 5px #33ff33;}
-/* Hover effect */
+    box-shadow: 0 0 15px var(--theme-color) inset, 0 0 5px var(--theme-color);}
 .hatch .zone-card:hover,
 .zone-card.hatch-start:hover {
     background-color: #1a1a1a; 
     border-color: #66ff66;      
     transform: scale(1.05);       
-    box-shadow: 0 0 30px #33ff33; 
+    box-shadow: 0 0 30px var(--theme-color); 
     z-index: 10;}
-/* icon same hover effect as main menu */
 .hatch .zone-card:hover .zone-icon,
 .zone-card.hatch-start:hover .zone-icon {
     transform: scale(1.1);
     filter: drop-shadow(0 0 8px currentColor);}
-/* Footer links for HATCH */
 .hatch-footer-link {
-    color: #33ff33;
+    color: var(--theme-color);
     text-decoration: none;
-    border-bottom: 1px dashed #33ff33;
     cursor: pointer;
     transition: all 0.2s ease;
     padding: 0 4px;
     font-size: 1.5rem;
-    letter-spacing: 1px;}
+    letter-spacing: 1px;
+    border-bottom: none;}
 .hatch-footer-link:hover {
-    color: #aaffaa;
-    border-bottom: 1px solid #aaffaa;
-    text-shadow: 0 0 8px #33ff33;}
-/* About and credit group for HATCH */
+    color: var(--theme-color);
+    text-shadow: 0 0 8px var(--theme-color);}
 .about-credit-group {
     display: flex;
     gap: 2rem;
     align-items: center;}
-/* Menu button for HATCH */
 .menu-link {
-    border-bottom: 2px solid #33ff33;
+    border-bottom: 2px solid var(--theme-color);
     font-weight: bold;
     background-color: #1a1a1a;
     padding: 0.2rem 0.8rem;
     border-radius: 0;
-    color: #33ff33;
+    color: var(--theme-color);
     text-decoration: none;
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 1.5rem;
     letter-spacing: 1px;}
 .menu-link:hover {
-    background-color: #33ff33;
+    background-color: var(--theme-color);
     color: #000;
     border-bottom: 2px solid #000;}
-/* Main page tab for HATCH */
 .main-page-tab {
     display: flex;
     justify-content: center;
     margin-top: 20px;
     padding-top: 15px;
-    border-top: 2px solid #33ff33;}
+    border-top: none;}
 .main-page-link {
-    color: #33ff33;
+    color: var(--theme-color);
     text-decoration: none;
     font-family: 'Press Start 2P', cursive;
     font-size: 1rem;
     padding: 12px 25px;
-    border: 2px solid #33ff33;
+    border: 2px solid var(--theme-color);
     background-color: #0a0a0a;
-    box-shadow: 0 0 15px #33ff33;
+    box-shadow: 0 0 15px var(--theme-color);
     transition: all 0.3s ease;
     letter-spacing: 2px;
     display: inline-block;
     cursor: pointer;}
 .main-page-link:hover {
-    background-color: #33ff33;
+    background-color: var(--theme-color);
     color: #000;
     transform: scale(1.05);
-    box-shadow: 0 0 25px #33ff33;}
-/* Tiny extra CRT effect */
+    box-shadow: 0 0 25px var(--theme-color);}
 .glow {
-    text-shadow: 0 0 5px #33ff33;}
-/* Responsive styles for HATCH */
+    text-shadow: 0 0 5px var(--theme-color);}
 @media (max-width: 600px) {
     .hatch .zone-card,
     .zone-card.hatch-start { 
