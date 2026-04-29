@@ -1,19 +1,306 @@
-<!-- Declaration to use HTML5 -->
 <!DOCTYPE html>
-<!-- Declaration for text content is english -->
 <html lang="en">
-<!-- head tag -->
 <head>
-
-<title>CIPHER DEN</title>
-
-
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIPHER DEN - Encode · Decode · Crack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        /* Cipher den specific styles */
+        :root {
+            --theme-color: #33ff33;
+            --theme-glow: #33ff33;}
+        .cipher-container {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid var(--theme-color, #33ff33);
+            background: #0a0a0a;}
+        .cipher-input-group {
+            margin-bottom: 20px;}
+        .cipher-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            display: block;
+            margin-bottom: 10px;
+            color: var(--theme-color, #33ff33);}
+        .cipher-textarea {
+            width: 100%;
+            padding: 12px;
+            background: #050505;
+            border: 1px solid var(--theme-color, #33ff33);
+            color: var(--theme-color, #33ff33);
+            font-family: 'VT323', monospace;
+            font-size: 1.1rem;
+            resize: vertical;}
+        .cipher-select {
+            background: #050505;
+            border: 1px solid var(--theme-color, #33ff33);
+            color: var(--theme-color, #33ff33);
+            padding: 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            cursor: pointer;}
+        .shift-slider {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 15px 0;}        
+        .shift-slider input {
+            flex: 1;
+            cursor: pointer;
+            background: #050505;}        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;}        
+        .cipher-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            padding: 12px 20px;
+            background: #0a0a0a;
+            border: 2px solid var(--theme-color, #33ff33);
+            color: var(--theme-color, #33ff33);
+            cursor: pointer;
+            transition: all 0.3s ease;}        
+        .cipher-btn:hover {
+            background: var(--theme-color, #33ff33);
+            color: #000;
+            transform: scale(1.05);}        
+        .game-mode-btn {
+            background: #0a0a0a;
+            border-color: #aa33ff;
+            color: #aa33ff;}        
+        .game-mode-btn:hover {
+            background: #aa33ff;
+            color: #000;}        
+        .high-score {
+            text-align: center;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            margin: 10px 0;
+            color: #ffaa33;}        
+        .game-panel {
+            display: none;
+            border: 2px solid #aa33ff;
+            padding: 20px;
+            margin: 20px 0;}        
+        .game-message {
+            font-size: 1.2rem;
+            text-align: center;
+            margin: 15px 0;}        
+        .encoded-message {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.2rem;
+            text-align: center;
+            color: #aa33ff;
+            margin: 20px 0;
+            word-break: break-all;}
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;}
+        .feedback {
+            margin-top: 15px;
+            text-align: center;}
+        .main-title, .banner {
+            color: var(--theme-color, #33ff33);}
+        .hatch-footer-link {
+            color: var(--theme-color, #33ff33);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--theme-color, #33ff33);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 0 4px;
+            font-size: 1.5rem;
+            letter-spacing: 1px;}        
+        .hatch-footer-link:hover {
+            color: var(--theme-color, #33ff33);
+            border-bottom: 1px solid var(--theme-color, #33ff33);
+            text-shadow: 0 0 8px var(--theme-color, #33ff33);}
+        .main-page-link {
+            color: var(--theme-color, #33ff33);
+            text-decoration: none;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            padding: 12px 25px;
+            border: 2px solid var(--theme-color, #33ff33);
+            background-color: #0a0a0a;
+            box-shadow: 0 0 15px var(--theme-color, #33ff33);
+            transition: all 0.3s ease;
+            letter-spacing: 2px;
+            display: inline-block;
+            cursor: pointer;}        
+        .main-page-link:hover {
+            background-color: var(--theme-color, #33ff33);
+            color: #000;
+            transform: scale(1.05);
+            box-shadow: 0 0 25px var(--theme-color, #33ff33);}
+/* red theme celebration */
+        .red-theme-celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 0, 0, 0.2);
+            pointer-events: none;
+            z-index: 999;
+            animation: redFlash 2s ease-out;}
+        @keyframes redFlash {
+            0% { background: rgba(255, 0, 0, 0.8); }
+            100% { background: rgba(255, 0, 0, 0); }}
+        .congrats-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #000;
+            border: 3px solid #ff0000;
+            color: #ff0000;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.2rem;
+            padding: 30px;
+            text-align: center;
+            z-index: 1000;
+            box-shadow: 0 0 50px #ff0000;
+            animation: bounceIn 0.5s ease-out;}
+        @keyframes bounceIn {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            80% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }}
+    </style></head>
 <body>
-
-<img src="../immages/inprogress.jpg" alt="Site Under Construction"><br><br>
-
-CIPHHER DEN CODE
-
-
-</body></html>
+    <div class="container">
+        <div class="header">
+            <div class="main-title">🔐 CIPHER DEN</div>
+            <p class="banner">Encode · Decode · Crack</p></div>
+        <div class="high-score" id="highScoreDisplay">
+            🏆 HIGH SCORE: <span id="highScore">0</span> 🏆
+            <div id="redUnlockedBadge" style="display: none; color: #ff0000; margin-top: 5px;">RED MODE UNLOCKED!</div></div>
+<!-- Cipher tool panel -->
+        <div id="cipherToolPanel" class="cipher-container">
+            <div class="cipher-input-group">
+                <label class="cipher-label">📝 YOUR MESSAGE</label>
+                <textarea id="cipherInput" class="cipher-textarea" rows="3" placeholder="Type your message here..."></textarea></div>
+            <div class="cipher-input-group">
+                <label class="cipher-label">🔧 CIPHER TYPE</label>
+                <select id="cipherType" class="cipher-select" onchange="updateCipher()">
+                    <option value="caesar">Caesar Cipher (Encode)</option>
+                    <option value="caesar-decode">Caesar Cipher (Decode)</option>
+                </select></div>
+            <div id="shiftControl" class="shift-slider">
+                <label class="cipher-label">⬅️ SHIFT AMOUNT (1-5) ➡️</label>
+                <input type="range" id="shiftAmount" min="1" max="5" value="3" oninput="document.getElementById('shiftValue').textContent = this.value; updateCipher()">
+                <span id="shiftValue" style="font-family:'Press Start 2P';font-size:0.8rem;">3</span></div>
+            <div class="cipher-input-group">
+                <label class="cipher-label">✨ RESULT</label>
+                <textarea id="cipherOutput" class="cipher-textarea" rows="3" readonly placeholder="Your encoded/decoded message will appear here..."></textarea></div>
+            <div class="button-group">
+                <button class="cipher-btn" onclick="updateCipher()">🔄 UPDATE</button>
+                <button class="cipher-btn" onclick="copyToClipboard()">📋 COPY</button>
+                <button class="cipher-btn game-mode-btn" onclick="startGameMode()">🎮 CRACK THE CODE</button></div></div>
+<!-- Game Mode Panel -->
+        <div id="gameModePanel" class="cipher-container game-panel">
+            <div class="game-stats">
+                <div class="cipher-label">📊 SCORE: <span id="gameScore">0</span></div>
+                <div class="cipher-label">⏱️ TIME: <span id="gameTimer">60</span>s</div></div>
+            <div class="cipher-label">🔍 CRACK THE CODE</div>
+            <div class="encoded-message" id="gameEncodedMessage">---</div>
+            <div class="cipher-input-group">
+                <label class="cipher-label">✏️ YOUR ANSWER</label>
+                <input type="text" id="gameUserAnswer" class="cipher-textarea" style="height: auto;" placeholder="Type your decoded message..."></div>
+            <div class="button-group">
+                <button class="cipher-btn" onclick="checkGameAnswer()">✅ SUBMIT</button>
+                <button class="cipher-btn game-mode-btn" onclick="getHint()">💡 HINT (-5 pts)</button>
+                <button class="cipher-btn" onclick="cancelGameMode()">❌ EXIT GAME</button></div>
+            <div id="gameFeedback" class="feedback"></div></div>
+        <div class="footer">
+            <div class="about-credit-group">
+                <a onclick="showAboutCipher()" class="hatch-footer-link">[ ABOUT ]</a>
+                <a onclick="showCreditsCipher()" class="hatch-footer-link">[ CREDITS ]</a></div></div>
+        <div class="main-page-tab">
+            <a onclick="goToMainPageCipher()" class="main-page-link">RETURN TO MAIN WEBSITE</a></div></div>
+    <script src="../js/main.js"></script>
+    <script>
+        let redThemeUnlocked = false;
+        function checkRedThemeUnlocked() {
+            const saved = localStorage.getItem('redThemeUnlocked');
+            if (saved === 'true') {
+                redThemeUnlocked = true;
+                document.getElementById('redUnlockedBadge').style.display = 'block';}}
+        function showRedThemeCelebration() {
+            const flash = document.createElement('div');
+            flash.className = 'red-theme-celebration';
+            document.body.appendChild(flash);
+            const congrats = document.createElement('div');
+            congrats.className = 'congrats-message';
+            congrats.innerHTML = '🔥 SECRET UNLOCKED! 🔥<br><br>RED MODE ACTIVATED!<br><br>';
+            document.body.appendChild(congrats);
+            setTimeout(() => { congrats.remove(); }, 3000);
+            setTimeout(() => { flash.remove(); }, 2000);}
+        function unlockRedTheme() {
+            if (!redThemeUnlocked) {
+                redThemeUnlocked = true;
+                localStorage.setItem('redThemeUnlocked', 'true');
+                document.getElementById('redUnlockedBadge').style.display = 'block';
+                showRedThemeCelebration();
+// Force theme to red
+                saveGlobalTheme('red');
+                applyGlobalTheme();}}
+        function applyGlobalThemeCipher() {
+// Use the global applyGlobalTheme function
+            loadGlobalTheme();
+            applyGlobalTheme();
+            checkRedThemeUnlocked();}
+        const originalEndGameMode = endGameMode;
+        window.endGameMode = function(reason) {
+            gameModeActive = false;
+            if (gameTimer) clearInterval(gameTimer);
+            const gamePanel = document.getElementById('gameModePanel');
+            const toolPanel = document.getElementById('cipherToolPanel');
+            const gameMessageEl = document.getElementById('gameMessage');
+            if (gamePanel) gamePanel.style.display = 'none';
+            if (toolPanel) toolPanel.style.display = 'block';
+            let highScore = localStorage.getItem('cipherHighScore') || 0;
+            if (gameScore > highScore) {
+                localStorage.setItem('cipherHighScore', gameScore);
+                highScore = gameScore;
+                if (gameScore >= 80 && !redThemeUnlocked) {
+                    unlockRedTheme();
+                    if (gameMessageEl) gameMessageEl.innerHTML = `🏆 NEW HIGH SCORE: ${gameScore}! 🏆<br>🔥 SECRET UNLOCKED: RED MODE ACTIVATED! 🔥`;
+                } else if (gameScore >= 80 && redThemeUnlocked) {
+                    if (gameMessageEl) gameMessageEl.innerHTML = `🏆 NEW HIGH SCORE: ${gameScore}! 🏆<br>🔥 RED MODE ALREADY ACTIVE! 🔥`;
+                } else { if (gameMessageEl) gameMessageEl.innerHTML = `🏆 NEW HIGH SCORE: ${gameScore}! 🏆`;}
+            } else { if (gameMessageEl) gameMessageEl.innerHTML = `Game over. Score: ${gameScore} | High Score: ${highScore}`;}
+            document.getElementById('highScore').textContent = highScore;
+            setTimeout(() => {
+                if (gameMessageEl) gameMessageEl.innerHTML = '';
+            }, 4000);};
+        window.addEventListener('DOMContentLoaded', () => {
+            loadGlobalTheme();
+            applyGlobalThemeCipher();
+            const highScore = localStorage.getItem('cipherHighScore') || 0;
+            document.getElementById('highScore').textContent = highScore;
+            updateCipher();
+            const shiftControl = document.getElementById('shiftControl');
+            if (shiftControl) shiftControl.style.display = 'flex';});
+//Listen for storage changes from other pages to sync theme
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'globalTheme' || e.key === 'redThemeUnlocked') {
+                loadGlobalTheme();
+                applyGlobalThemeCipher();
+            }
+            if (e.key === 'cipherHighScore') {
+                document.getElementById('highScore').textContent = localStorage.getItem('cipherHighScore') || 0;}});
+        function goToMainPageCipher() {
+            window.location.href = '../index.html';}
+         function showAboutCipher() {
+            alert('CIPHER DEN\nA Caesar cipher encoding/decoding tool with Crack the Code game mode.\n\nCaesar Cipher:\n- Encode: Shift letters forward (1-5 positions)\n- Decode: Shift letters backward (1-5 positions)\n\nCrack the Code: Decode the hidden message!\n\nSECRET: Score 80 or higher to unlock RED MODE!');}
+        function showCreditsCipher() {
+            alert('Created for Web Technologies coursework\nFonts: Press Start 2P, VT323\n\nCrack the Code mode tests your code-breaking skills!\n\nRED MODE - Hidden reward for master codebreakers!');}
+</script></body></html>

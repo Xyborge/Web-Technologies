@@ -46,6 +46,8 @@ let chickenState = {
     lastFed: Date.now(),
     deathCount: 0,
     saved: false};
+// Store timer reference globally
+window.globalTimerInterval = null;
 function loadChicken() {
     const saved = localStorage.getItem('chickenState');
     if (saved) {
@@ -56,10 +58,12 @@ function saveChicken() {
     localStorage.setItem('chickenState', JSON.stringify(chickenState));}
 function startGame() {
 // Clear any existing timer
-    if (window.globalTimerInterval) clearInterval(window.globalTimerInterval);
+    if (window.globalTimerInterval) {
+        clearInterval(window.globalTimerInterval);
+        window.globalTimerInterval = null;}
 // Get current theme color
     const themeName = loadGlobalTheme();
-    const themeColor = themeName === 'green' ? '#33ff33' : '#ff6600';
+    const themeColor = themeName === 'green' ? '#33ff33' : (themeName === 'red' ? '#ff0000' : '#ff6600');
     chickenState = {
         stage: 'egg',
         name: 'Clucky',
@@ -70,9 +74,15 @@ function startGame() {
         saved: false};
     saveChicken();
     updateDisplay();
+// Reset timer display
+    const timerDisplay = document.getElementById('feedTimerDisplay');
+    if (timerDisplay) {
+        timerDisplay.classList.remove('hidden');
+        timerDisplay.style.color = '#ffaa33';
+        timerDisplay.innerHTML = 'TIME TO FEED: 45s';}
     const messagesEl = document.getElementById('gameMessages');
     if (messagesEl) {
-        messagesEl.innerHTML = `<span style="color:${themeColor}">✨ Your egg has arrived! You have 45 seconds to feed it!</span>`;}
+        messagesEl.innerHTML = `<span style="color:${themeColor}">Your egg has arrived! You have 45 seconds to feed it!</span>`;}
     const hintArea = document.getElementById('hintArea');
     if (hintArea) {
         hintArea.style.display = 'none';
@@ -87,47 +97,113 @@ function startGame() {
     if (typeof startGlobalTimer === 'function') {
         startGlobalTimer();}}
 function feedChicken() {
-    if (chickenState.stage === 'dead' || chickenState.saved === true) return;
+// reload the latest chicken state from localStorage first
+    const saved = localStorage.getItem('chickenState');
+    if (saved) {
+        chickenState = JSON.parse(saved);}
+// Check if chicken is dead
+    if (chickenState.stage === 'dead') {
+        const messagesEl = document.getElementById('gameMessages');
+        if (messagesEl) {
+            messagesEl.innerHTML = '<span style="color:#ffaa33">💀 Clucky is dead. Start a new game!</span>';}
+        return;}
+// Check if chicken is saved (lived full life)
+    if (chickenState.saved === true) {
+        const messagesEl = document.getElementById('gameMessages');
+        if (messagesEl) {
+            messagesEl.innerHTML = '<span style="color:#ffaa33">🐓 Clucky lived a full life! Start a new game to raise another chicken.</span>';}
+        return;}
+// check if chicken is adult form first
+    if (chickenState.stage === 'adult') {
+        const messagesEl = document.getElementById('gameMessages');
+        if (messagesEl) {
+            messagesEl.innerHTML = '<span style="color:#ffaa33">🐔 Clucky is already an adult. Go make your choice (Cook or Let Live) before starting a new game!</span>';}
+        return;}
+// Update hunger and lastFed
     chickenState.lastFed = Date.now();
     chickenState.hunger = Math.min(100, chickenState.hunger + 20);
-    checkGrowth();
+// Save immediately after updating hunger
     saveChicken();
+// Check for growth (which will save again if stage changes)
+    checkGrowth();
+// Update display
     updateDisplay();
-// Get current theme color
+// Get current theme color for message
     const themeName = loadGlobalTheme();
-    const themeColor = themeName === 'green' ? '#33ff33' : '#ff6600';
+    const themeColor = themeName === 'green' ? '#33ff33' : (themeName === 'red' ? '#ff0000' : '#ff6600');
     const messagesEl = document.getElementById('gameMessages');
     if (messagesEl) {
-        messagesEl.innerHTML = `<span style="color:${themeColor}">🍗 Yum! Hunger increased. You have 45 seconds to feed again!</span>`;}}
+        messagesEl.innerHTML = `<span style="color:${themeColor}">🍗 Yum! Hunger increased to ${chickenState.hunger}%. You have 45 seconds to feed again!</span>`;}}
 function playWithChicken() {
-    if (chickenState.stage === 'dead' || chickenState.saved === true) return;
+// Reload the latest chicken state from localStorage first
+    const saved = localStorage.getItem('chickenState');
+    if (saved) {
+        chickenState = JSON.parse(saved);}
+// Check if chicken is dead
+    if (chickenState.stage === 'dead') {
+        const messagesEl = document.getElementById('gameMessages');
+        if (messagesEl) {
+            messagesEl.innerHTML = '<span style="color:#ffaa33">💀 Clucky is dead. Start a new game!</span>';}
+        return;}
+// Check if chicken is saved (lived full life)
+    if (chickenState.saved === true) {
+        const messagesEl = document.getElementById('gameMessages');
+        if (messagesEl) {
+            messagesEl.innerHTML = '<span style="color:#ffaa33">🐓 Clucky lived a full life! Start a new game to raise another chicken.</span>';}
+        return;}
+// Check if chicken is adult firsth then show proper message
+    if (chickenState.stage === 'adult') {
+        const messagesEl = document.getElementById('gameMessages');
+        if (messagesEl) {
+            messagesEl.innerHTML = '<span style="color:#ffaa33">🐔 Clucky is already an adult. Go make your choice (Cook or Let Live) before starting a new game!</span>';}
+        return;}
+// Update happiness 
     chickenState.happiness = Math.min(100, chickenState.happiness + 20);
-    checkGrowth();
+// Save immediately
     saveChicken();
+// Check for growth
+    checkGrowth();
+// Update display
     updateDisplay();
-// Get current theme color
     const themeName = loadGlobalTheme();
-    const themeColor = themeName === 'green' ? '#33ff33' : '#ff6600';
+    const themeColor = themeName === 'green' ? '#33ff33' : (themeName === 'red' ? '#ff0000' : '#ff6600');
     const messagesEl = document.getElementById('gameMessages');
     if (messagesEl) {
-        messagesEl.innerHTML = `<span style="color:${themeColor}">🐔 You played with your chicken! Happiness increased.</span>`;}}
+        messagesEl.innerHTML = `<span style="color:${themeColor}">🐔 You played with your chicken! Happiness increased to ${chickenState.happiness}%.</span>`;}}
 function checkGrowth() {
-    if (chickenState.stage !== 'dead' && chickenState.saved !== true) {
-// Get current theme color
-        const themeName = loadGlobalTheme();
-        const themeColor = themeName === 'green' ? '#33ff33' : '#ff6600';
+// reload the latest chicken state from localStorage first
+    const saved = localStorage.getItem('chickenState');
+    if (saved) {
+        chickenState = JSON.parse(saved);}
+    let stageChanged = false;
+// Only process growth if not dead, not saved, and not already adult
+    if (chickenState.stage !== 'dead' && chickenState.saved !== true && chickenState.stage !== 'adult') {
         if (chickenState.stage === 'egg' && chickenState.happiness >= 70) {
             chickenState.stage = 'chick';
-            const messagesEl = document.getElementById('gameMessages');
-            if (messagesEl) {
-                messagesEl.innerHTML = `<span style="color:${themeColor}">🐥 Your egg hatched! A baby chick appears! Keep feeding and playing!</span>`;}} 
+            stageChanged = true;} 
         else if (chickenState.stage === 'chick' && chickenState.hunger >= 100 && chickenState.happiness >= 100) {
             chickenState.stage = 'adult';
+            stageChanged = true;
+// Stop the global timer when becoming adult
+            if (window.globalTimerInterval) {
+                clearInterval(window.globalTimerInterval);
+                window.globalTimerInterval = null;}}
+        if (stageChanged) {
+            saveChicken();
+            const themeName = loadGlobalTheme();
+            const themeColor = themeName === 'green' ? '#33ff33' : (themeName === 'red' ? '#ff0000' : '#ff6600');
             const messagesEl = document.getElementById('gameMessages');
             if (messagesEl) {
-                messagesEl.innerHTML = `<span style="color:${themeColor}">🐔 Your chick grew into a full adult chicken! Both meters at 100%! Make your choice...</span>`;}}}
+                if (chickenState.stage === 'chick') {
+                    messagesEl.innerHTML = `<span style="color:${themeColor}">🐥 Your egg hatched! A baby chick appears! Keep feeding and playing!</span>`;
+                } else if (chickenState.stage === 'adult') {
+                    messagesEl.innerHTML = `<span style="color:${themeColor}">🐔 Your chick grew into a full adult chicken! Both meters at 100%! Make your choice in THE COOP</span>`;}}}}
     updateDisplay();}
 function makeChoice(choice) {
+// reload the latest chicken state from localStorage first
+    const saved = localStorage.getItem('chickenState');
+    if (saved) {
+        chickenState = JSON.parse(saved);}
     if (chickenState.stage !== 'adult') {
         const messagesEl = document.getElementById('gameMessages');
         if (messagesEl) {
@@ -151,7 +227,7 @@ function makeChoice(choice) {
         chickenState.saved = true;
         const messagesEl = document.getElementById('gameMessages');
         if (messagesEl) {
-            messagesEl.innerHTML = `<span style="color:#ffaa33">🐓 You let Clucky live a full, happy life as a proud rooster! Chickens Saved: ${savedCount}\n\n💀 You died of old age waiting!</span>`;}}
+            messagesEl.innerHTML = `<span style="color:#ffaa33">🐓 You let Clucky live a full, happy life as a proud rooster! Chickens Saved: ${savedCount}</span>`;}}
     saveChicken();
     updateDisplay();
 // Stop timer when game ends
@@ -189,16 +265,34 @@ function updateDisplay() {
     const savedCount = localStorage.getItem('chickenSavedCount') || 0;
     if (deathCountEl) deathCountEl.textContent = deathCount;
     if (savedCountEl) savedCountEl.textContent = savedCount;
+// Always update button visibility based on current stage
     if (actionButtons && choiceButtons) {
         if (chickenState.stage === 'adult') {
+// Adult - show choice buttons, hide action buttons
             actionButtons.style.display = 'none';
             choiceButtons.style.display = 'flex';
-        } else if (chickenState.stage === 'dead') {
+        } else if (chickenState.stage === 'dead' || chickenState.saved === true) {
+// Dead or saved - hide both
             actionButtons.style.display = 'none';
             choiceButtons.style.display = 'none';
-        } else if (chickenState.saved === true) {
-            actionButtons.style.display = 'none';
-            choiceButtons.style.display = 'none';}}}
+        } else {
+// Egg or chick - show action buttons, hide choice buttons
+            actionButtons.style.display = 'flex';
+            choiceButtons.style.display = 'none';}}
+// Also update the timer display based on stage
+    const timerDisplay = document.getElementById('feedTimerDisplay');
+    if (timerDisplay) {
+        if (chickenState.stage === 'adult') {
+            timerDisplay.classList.remove('hidden');
+            timerDisplay.style.color = '#33ff33';
+            timerDisplay.innerHTML = '🐔 MAKE YOUR CHOICE 🐔';
+        } else if (chickenState.stage === 'dead' || chickenState.saved === true) {
+            timerDisplay.classList.remove('hidden');
+            timerDisplay.style.color = '#ff3366';
+            timerDisplay.innerHTML = '⏱️ GAME OVER';
+        } else {
+// For egg or chick, timer will be updated by the interval
+            timerDisplay.classList.remove('hidden');}}}
 // Functions for cipher zone
 function caesarCipher(text, shift, decode = false) {
     const actualShift = decode ? -shift : shift;
@@ -300,8 +394,7 @@ function getHint() {
         let hint = '';
         const ans = currentPuzzle.answer;
         if (ans && ans.length > 0) {
-            hint = `First letter: ${ans[0]}, Length: ${ans.length}`;
-        }
+            hint = `First letter: ${ans[0]}, Length: ${ans.length}`;}
         if (feedbackEl) feedbackEl.innerHTML = `<span style="color:#ffaa33">💡 HINT: ${hint}</span>`;
     } else {
         if (feedbackEl) feedbackEl.innerHTML = '<span style="color:#ffaa33">❌ Not enough points for hint (need 5)</span>';}}
@@ -355,19 +448,108 @@ function processTerminalCommand(command) {
             'What is a computer\'s favorite beat? An ALGO-RHYTHM!'];
         response = jokes[Math.floor(Math.random() * jokes.length)];}
     else if (cmd === 'feed') {
-        response = '🍗 You fed your chicken! (Connect to THE COOP for the full chicken simulation)';}
-    else if (cmd.startsWith('cipher ')) {
-        const msg = cmd.substring(7);
+// Reload current chicken state
+        const savedState = localStorage.getItem('chickenState');
+        if (savedState) {
+            const currentChicken = JSON.parse(savedState);
+// check if cluck is an adult first  - show proper message from terminal
+            if (currentChicken.stage === 'adult') {
+                response = '🐔 Clucky is already adult! Go to THE COOP to make your choice (Cook or Let Live)!';}
+            else if (currentChicken.saved === true) {
+                response = '🐓 Clucky lived a full life! Start a new game in THE COOP to raise another chicken.';}
+            else if (currentChicken.stage === 'dead') {
+                response = '💀 Clucky is dead. Start a new game in THE COOP.';}
+            else {
+// Call the feed function
+                if (typeof feedChicken === 'function') {
+                    feedChicken();
+// Get updated state
+                    const updatedState = localStorage.getItem('chickenState');
+                    if (updatedState) {
+                        const chicken = JSON.parse(updatedState);
+                        response = `🍗 You fed Clucky! Hunger: ${chicken.hunger}% | Happiness: ${chicken.happiness}%`;
+                    } else {
+                        response = '🍗 You fed Clucky! Check THE COOP to see progress.';}
+                } else {
+                    response = '❌ Chicken simulator not ready. Start a game in THE COOP first.';}}
+        } else {
+            response = '❌ No chicken found. Start a game in THE COOP first!';}}
+    else if (cmd === 'play') {
+// Reload current chicken state
+        const savedState = localStorage.getItem('chickenState');
+        if (savedState) {
+            const currentChicken = JSON.parse(savedState);
+// check if clucky is an adult - show proper message from terminal
+            if (currentChicken.stage === 'adult') {
+                response = '🐔 Clucky is already adult! Go to THE COOP to make your choice (Cook or Let Live)!';}
+            else if (currentChicken.saved === true) {
+                response = '🐓 Clucky lived a full life! Start a new game in THE COOP to raise another chicken.';}
+            else if (currentChicken.stage === 'dead') {
+                response = '💀 Clucky is dead. Start a new game in THE COOP.';}
+            else {
+// Call the play function
+                if (typeof playWithChicken === 'function') {
+                    playWithChicken();
+// Get updated state
+                    const updatedState = localStorage.getItem('chickenState');
+                    if (updatedState) {
+                        const chicken = JSON.parse(updatedState);
+                        response = `🐔 You played with Clucky! Hunger: ${chicken.hunger}% | Happiness: ${chicken.happiness}%`;
+                    } else {
+                        response = '🐔 You played with Clucky! Check THE COOP to see progress.';}
+                } else {
+                    response = '❌ Chicken simulator not ready. Start a game in THE COOP first.';}}
+        } else {
+            response = '❌ No chicken found. Start a game in THE COOP first!';}}
+    else if (cmd === 'status') {
+        const saved = localStorage.getItem('chickenState');
+        if (saved) {
+            const chicken = JSON.parse(saved);
+            if (chicken.saved === true) {
+                response = `🐓 Clucky lived a full, happy life as a proud rooster! Chickens Saved: ${localStorage.getItem('chickenSavedCount') || 0}`;
+            } else if (chicken.stage === 'dead') {
+                response = `💀 Clucky is dead. Start a new game in THE COOP.`;
+            } else if (chicken.stage === 'adult') {
+                response = `🐔 CLUCKY IS ADULT! Go to THE COOP to make your choice! (Cook or Let Live)`;
+            } else {
+                const timeSinceLastFeed = Math.floor((Date.now() - chicken.lastFed) / 1000);
+                const timeLeft = Math.max(0, 45 - timeSinceLastFeed);
+                response = `🐔 Clucky the ${chicken.stage.toUpperCase()} | Hunger: ${chicken.hunger}% | Happiness: ${chicken.happiness}% | Time to feed: ${timeLeft}s`;}
+        } else {
+            response = `❌ No chicken found. Start a game in THE COOP first!`;}}
+    else if (cmd === 'solve') {
+        const puzzlesList = [
+            { encoded: "LIEF LV IXQ", answer: "LIFE IS FUN" },
+            { encoded: "Ymj fywnj htsyjz yt ymj qjky tk ymj gjxy", answer: "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG" },
+            { encoded: "IFMMP XPSME", answer: "HELLO WORLD" },
+            { encoded: "ZPV BSF B XJTTFSE", answer: "YOU ARE A WIZARD" }];
+        response = "🔓 CRACK THE CODE SOLUTIONS:\n";
+        puzzlesList.forEach((p, i) => {
+            response += `${i+1}. "${p.encoded}" → "${p.answer}"\n`;});
+        response += "\n💡 Use these to win the Cipher Den game mode!";}
+    else if (cmd.startsWith('encode ')) {
+        const parts = cmd.substring(7).trim().split(' ');
+        let shift = 1;
+        let msg = '';
+        if (parts.length > 0 && /^\d+$/.test(parts[0])) {
+            shift = parseInt(parts[0]);
+            if (shift < 1) shift = 1;
+            if (shift > 5) shift = 5;
+            msg = parts.slice(1).join(' ');
+        } else {
+            msg = parts.join(' ');}
+        if (msg === '') {
+            return 'Usage: encode [shift 1-5] [message]  OR  encode [message] (uses shift 1)';}
         const encoded = msg.split('').map(c => {
             if (c.match(/[a-z]/i)) {
                 const code = c.charCodeAt(0);
                 const base = code >= 97 ? 97 : 65;
-                return String.fromCharCode(((code - base + 3) % 26) + base);}
+                return String.fromCharCode(((code - base + shift) % 26) + base);}
             return c;
         }).join('');
-        response = `Encoded: "${encoded}"`;}
+        response = `Encoded (shift ${shift}): "${encoded}"`;}
     else if (cmd === 'help') {
-        response = 'Available commands: date, time, clear, theme, joke, feed, cipher [msg]';}
+        response = 'Available commands: date, time, clear, theme, joke, feed, play, status, solve, encode [1-5] [msg]';}
     else if (cmd === '') {
         response = '';}
     else {
@@ -390,20 +572,31 @@ const THEMES = {
         borderColor: '#ff6600',
         shadowColor: '#ff6600',
         textColor: '#ff6600',
-        accentColor: '#ffaa33'}};
+        accentColor: '#ffaa33'},
+    red: {
+        name: 'red',
+        primaryColor: '#ff0000',
+        secondaryColor: '#ff3333',
+        borderColor: '#ff0000',
+        shadowColor: '#ff0000',
+        textColor: '#ff0000',
+        accentColor: '#ff3333'}};
 let currentGlobalTheme = 'green';
+let redThemeUnlockedFlag = false;
 function loadGlobalTheme() {
+// Check if red theme was unlocked
+    redThemeUnlockedFlag = localStorage.getItem('redThemeUnlocked') === 'true';
     const savedTheme = localStorage.getItem('globalTheme');
     if (savedTheme && THEMES[savedTheme]) {
         currentGlobalTheme = savedTheme;
-    } else {currentGlobalTheme = 'green';}
+    } else {
+        currentGlobalTheme = 'green';}
     return currentGlobalTheme;}
 function saveGlobalTheme(themeName) {
     localStorage.setItem('globalTheme', themeName);
     currentGlobalTheme = themeName;}
 function applyGlobalTheme() {
-    const themeName = loadGlobalTheme();
-    const theme = THEMES[themeName];
+    const theme = THEMES[currentGlobalTheme];
     const container = document.querySelector('.container');
     if (container) {
         container.style.borderColor = theme.borderColor;
@@ -435,16 +628,22 @@ function applyGlobalTheme() {
             link.style.borderBottomColor = theme.borderColor;
             link.style.color = theme.textColor;}});}
 function toggleGlobalTheme() {
-    const newTheme = currentGlobalTheme === 'green' ? 'orange' : 'green';
+// Get available themes based on unlock status
+    const availableThemes = redThemeUnlockedFlag ? ['green', 'orange', 'red'] : ['green', 'orange'];
+    const currentIndex = availableThemes.indexOf(currentGlobalTheme);
+    const nextIndex = (currentIndex + 1) % availableThemes.length;
+    const newTheme = availableThemes[nextIndex];
     saveGlobalTheme(newTheme);
     applyGlobalTheme();
-    const themeColor = newTheme === 'green' ? '#33ff33' : '#ff6600';
+    const themeColor = THEMES[newTheme].primaryColor;
     document.documentElement.style.setProperty('--theme-color', themeColor);
     document.documentElement.style.setProperty('--theme-glow', themeColor);
     console.log(`Theme switched to ${newTheme} mode`);
     return newTheme;}
 function getCurrentTheme() {
     return loadGlobalTheme();}
+function isRedThemeUnlocked() {
+    return redThemeUnlockedFlag;}
 // initialize
 window.addEventListener('DOMContentLoaded', () => {
     rotateBanner();});

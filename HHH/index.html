@@ -17,7 +17,8 @@
                 <span>-</span>
                 <span>H</span><span>A</span><span>C</span><span>K</span>
                 <span>-</span>
-                <span>H</span><span>A</span><span>S</span><span>H</span></div>
+                <span>H</span><span>A</span><span>S</span><span>H</span>
+            </div>
             <div class="rotating-banner" id="rotatingBanner">
                 HATCH - RAISE YOUR CHICKEN. FACE THE CONSEQUENCES.</div></div>
         <div class="zones-grid">
@@ -26,7 +27,7 @@
                 <div class="zone-title">THE COOP: HATCH</div>
                 <div class="zone-desc">Hatch. Feed. Choose.</div>
                 <div class="zone-status">RAISE YOUR CHICKEN</div>
-                <div class="easter-hint">> secret: "feed" in terminal</div></a>
+                <div class="easter-hint">> try "feed" or "play" in terminal</div></a>
             <a href="hack/the-terminal.html" class="zone-card" data-zone="hack">
                 <div class="zone-icon">⌨️</div>
                 <div class="zone-title">THE TERMINAL: HACK</div>
@@ -38,50 +39,36 @@
                 <div class="zone-title">CIPHER DEN: HASH</div>
                 <div class="zone-desc">Encode. Decode. Crack.</div>
                 <div class="zone-status">BREAK THE CIPHER</div>
-                <div class="easter-hint">> high score: --</div></a></div>
+                <div class="easter-hint" id="cipherHighScoreHint">> high score: --</div></a></div>
         <div class="footer">
             <div class="footer-links">
                 <a onclick="showAbout()">[ ABOUT ]</a>
                 <a onclick="showCredits()">[ CREDITS ]</a>
-                <a onclick="resetGame()">[ RESET ]</a>
-            </div></div></div>
+                <a onclick="resetGame()">[ RESET ]</a></div></div></div>
     <script src="js/main.js"></script>
     <script>
         function applyThemeToMainPage() {
-            const themeName = loadGlobalTheme();
-            const themeColor = themeName === 'green' ? '#33ff33' : '#ff6600';
-            const themeGlow = themeName === 'green' ? '#33ff33' : '#ff6600';
-            document.documentElement.style.setProperty('--theme-color', themeColor);
-            document.documentElement.style.setProperty('--theme-glow', themeGlow);
-            const container = document.querySelector('.container');
-            if (container) {
-                container.style.borderColor = themeColor;
-                container.style.boxShadow = `0 0 20px ${themeGlow}, inset 0 0 10px ${themeGlow}`;}
-            const banner = document.querySelector('.rotating-banner');
-            if (banner) {
-                banner.style.borderTopColor = themeColor;
-                banner.style.borderBottomColor = themeColor;
-                banner.style.color = themeColor;}
-            const cards = document.querySelectorAll('.zone-card');
-            cards.forEach(card => {
-                card.style.borderColor = themeColor;});
-            const links = document.querySelectorAll('.footer-links a');
-            links.forEach(link => {
-                link.style.borderBottomColor = themeColor;
-                link.style.color = themeColor;});
-            const title = document.querySelector('.main-title');
-            if (title) {
-                title.style.textShadow = `0 0 5px ${themeColor}`;
-                const spans = title.querySelectorAll('span');
-                spans.forEach(span => {
-                span.style.color = themeColor;});}
-            const statuses = document.querySelectorAll('.zone-status');
-            statuses.forEach(status => {
-                status.style.borderColor = themeColor;
-                status.style.color = themeColor;});}
+// Use the global theme
+            loadGlobalTheme();
+            applyGlobalTheme();
+// update the Cipher Den high score hint
+            updateCipherHighScore();}
+// Update high score display on Cipher Den card
+        function updateCipherHighScore() {
+            const highScore = localStorage.getItem('cipherHighScore') || 0;
+            const hintElement = document.getElementById('cipherHighScoreHint');
+            if (hintElement) {
+                hintElement.innerHTML = `> high score: ${highScore}`;}}
         window.addEventListener('DOMContentLoaded', () => {
             loadGlobalTheme();
             applyThemeToMainPage();
             if (typeof rotateBanner === 'function') {
                 rotateBanner();}});
-    </script></body></html>
+// Listen for storage changes from other pages to sync theme
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'cipherHighScore') {
+                updateCipherHighScore();}
+            if (e.key === 'globalTheme' || e.key === 'redThemeUnlocked') {
+                loadGlobalTheme();
+                applyThemeToMainPage();}});
+</script></body></html>

@@ -1,18 +1,372 @@
-<!-- Declaration to use HTML5 -->
 <!DOCTYPE html>
-<!-- Declaration for text content is english -->
 <html lang="en">
-<!-- head tag -->
 <head>
-
-<title>THE TERMINAL</title>
-
-
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE TERMINAL - Retro Command Line</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+/* Terminal specific styles */
+        .terminal-container {
+            background: #000000;
+            border: 3px solid var(--theme-color, #33ff33);
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 0 20px var(--theme-color, #33ff33) inset, 0 0 10px var(--theme-color, #33ff33);
+            font-family: 'VT323', monospace;}
+        .terminal-output {
+            height: 300px;
+            overflow-y: auto;
+            color: var(--theme-color, #33ff33);
+            font-family: 'VT323', monospace;
+            font-size: 1.1rem;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #050505;}
+        .terminal-input-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid var(--theme-color, #33ff33);
+            padding-top: 10px;}
+        .terminal-prompt {
+            color: var(--theme-color, #33ff33);
+            font-weight: bold;
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;}
+        .terminal-input {
+            background: transparent;
+            border: none;
+            color: var(--theme-color, #33ff33);
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+            flex: 1;
+            outline: none;}
+        .terminal-input::placeholder {
+            color: #1a4a1a;}
+        .cursor-blink {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background-color: var(--theme-color, #33ff33);
+            animation: blink 1s infinite;
+            margin-left: 5px;}
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }}
+        .command-list {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px dashed var(--theme-color, #33ff33);
+            background: #0a0a0a;}
+        .command-list h4 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            margin-bottom: 10px;
+            color: var(--theme-color, #33ff33);}
+        .command-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;}
+        .command-badge {
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            color: var(--theme-color, #33ff33);
+            border: 1px solid var(--theme-color, #33ff33);
+            padding: 4px 10px;
+            background: #050505;}
+        .loading-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-family: 'VT323', monospace;
+            color: var(--theme-color, #33ff33);}
+        .loading-text {
+            font-size: 2rem;
+            letter-spacing: 4px;}
+        .loading-bar {
+            width: 300px;
+            height: 20px;
+            border: 2px solid var(--theme-color, #33ff33);
+            margin-top: 20px;}
+        .loading-fill {
+            width: 0%;
+            height: 100%;
+            background: var(--theme-color, #33ff33);
+            transition: width 0.1s ease;}
+/* Footer - only about and credits */
+        .terminal-footer {
+            border-top: 2px solid var(--theme-color, #33ff33);
+            padding-top: 20px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;}
+/* Theme css variables */
+        :root {
+            --theme-color: #33ff33;
+            --theme-glow: #33ff33;}
+</style></head>
 <body>
-<img src="../immages/inprogress.jpg" alt="Site Under Construction"><br><br>
-
-THE TERMINAL CODE HERE
-
-
-</body></html>
+    <div class="container">
+        <div class="header">
+            <div class="main-title">💾 THE TERMINAL</div>
+            <p class="banner">C:// Type · Explore · Discover</p></div>
+        <div class="terminal-container">
+            <div class="terminal-output" id="terminalOutput"></div>
+            <div class="terminal-input-line">
+                <span class="terminal-prompt">C:\></span>
+                <input type="text" id="terminalInput" class="terminal-input" placeholder="type a command..." autofocus>
+                <span class="cursor-blink"></span></div></div>
+        <div class="command-list">
+            <h4>📟 AVAILABLE COMMANDS</h4>
+<div class="command-grid">
+    <span class="command-badge">date</span>
+    <span class="command-badge">time</span>
+    <span class="command-badge">clear</span>
+    <span class="command-badge">theme</span>
+    <span class="command-badge">joke</span>
+    <span class="command-badge">feed</span>
+    <span class="command-badge">play</span>
+    <span class="command-badge">status</span>
+    <span class="command-badge">solve</span>
+    <span class="command-badge">encode [1-5] [msg]</span></div></div>
+<!-- Footer with about and credits -->
+        <div class="terminal-footer">
+            <a onclick="showAboutTerminal()" class="hatch-footer-link">[ ABOUT ]</a>
+            <a onclick="showCreditsTerminal()" class="hatch-footer-link">[ CREDITS ]</a></div>
+        <div class="main-page-tab">
+            <a onclick="goToMainPageTerminal()" class="main-page-link">RETURN TO MAIN WEBSITE</a></div></div>
+<!-- Loading screen overlay -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-text">LOADING TERMINAL...</div>
+        <div class="loading-bar">
+            <div id="loadingFill" class="loading-fill"></div></div></div>
+    <script src="../js/main.js"></script>
+    <script>
+// Terminal state
+        let bootComplete = false;
+        function applyThemeToTerminal() {
+// First ensure global theme is loaded
+            loadGlobalTheme();
+// Apply global theme which handles all theme colors including red
+            applyGlobalTheme();}
+        function goToMainPageTerminal() {
+            window.location.href = '../index.html';}
+        function showAboutTerminal() {
+            alert('THE TERMINAL\nA retro command-line experience.\n\nAvailable commands:\n- date: Show system date\n- time: Show system time\n- clear: Clear screen\n- theme: Switch between GREEN, ORANGE, and RED (if unlocked) mode\n- joke: Tell a joke\n- feed: Feed Clucky\n- play: Play with Clucky\n- status: Check Clucky\'s stats\n- solve: Get answers to Crack the Code puzzles\n- encode [1-5] [msg]: Encode a message (default shift 1)');}
+        function showCreditsTerminal() {
+            alert('Created for Web Technologies coursework\nFonts: Press Start 2P, VT323\n\nRetro terminal inspired by MS-DOS');}
+// Show loading screen on page load
+        window.addEventListener('DOMContentLoaded', () => {
+// Apply saved theme first
+            loadGlobalTheme();
+            applyThemeToTerminal();
+            const loadingScreen = document.getElementById('loadingScreen');
+            const loadingFill = document.getElementById('loadingFill');
+            loadingScreen.style.display = 'flex';
+            let width = 0;
+            const interval = setInterval(() => {
+                width += 2;
+                loadingFill.style.width = width + '%';
+                if (width >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                        bootTerminal();
+                        const input = document.getElementById('terminalInput');
+                        input.focus();}, 500);}}, 30);});
+// Boot sequence
+        function bootTerminal() {
+            const outputDiv = document.getElementById('terminalOutput');
+            const bootMessages = [
+                'THE TERMINAL v1.0',
+                '(C) 1986 Terminal Industries',
+                '─────────────────────────────',
+                'C:\\> MEMORY CHECK... OK',
+                'C:\\> LOADING COMMANDS... DONE',
+                'C:\\> SYSTEM ONLINE',
+                ''];
+            let i = 0;
+            const bootInterval = setInterval(() => {
+                if (i < bootMessages.length) {
+                    const msgDiv = document.createElement('div');
+                    msgDiv.innerHTML = bootMessages[i] + '\r\n';
+                    outputDiv.appendChild(msgDiv);
+                    outputDiv.scrollTop = outputDiv.scrollHeight;
+                    i++;
+                } else {
+                    clearInterval(bootInterval);
+                    bootComplete = true;}}, 250);}
+// Handle enter key in terminal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const input = document.getElementById('terminalInput');
+                if (input && document.activeElement === input) {
+                    const command = input.value;
+                    if (command) {
+                        processCommand(command);}}}});
+// Process command
+        function processCommand(cmd) {
+            const input = document.getElementById('terminalInput');
+            const outputDiv = document.getElementById('terminalOutput');
+            if (!cmd.trim()) {
+                input.value = '';
+                return;}
+            const response = getCommandResponse(cmd);
+            const theme = THEMES[currentGlobalTheme];
+            const themeColor = theme ? theme.primaryColor : '#33ff33';
+            const historyDiv = document.createElement('div');
+            historyDiv.innerHTML = `<span class="terminal-prompt" style="color:${themeColor}">C:\\></span> ${cmd}<br>${response}<br>`;
+            outputDiv.appendChild(historyDiv);
+            outputDiv.scrollTop = outputDiv.scrollHeight;
+            input.value = '';}
+        function getCommandResponse(cmd) {
+            const input = cmd.toLowerCase().trim();
+            if (input === 'date') {
+                const date = new Date();
+                return `Current date: ${date.toDateString()}`;}
+            else if (input === 'time') {
+                const date = new Date();
+                return `Current time: ${date.toLocaleTimeString()}`;}
+            else if (input === 'clear') {
+                document.getElementById('terminalOutput').innerHTML = '';
+                return '';}
+            else if (input === 'theme') {
+                const newTheme = toggleGlobalTheme();
+                applyThemeToTerminal();
+                return `Theme switched to ${newTheme.toUpperCase()} mode. (Applies to ALL zones!)`;}
+            else if (input === 'joke') {
+                const jokes = [
+                    'Why did the programmer go to rehab? He was addicted to coding',
+                    'What do you call a fake noodle? An IMPASTA!',
+                    'Why do programmers prefer dark mode? Because light attracts bugs!',
+                    'Why are emails so lonely? They are afraid of attachments' ];
+                return jokes[Math.floor(Math.random() * jokes.length)];}
+            else if (input === 'feed') {
+                const saved = localStorage.getItem('chickenState');
+                if (!saved) {
+                    return '❌ No chicken found. Start a game in THE COOP first!';}
+                const chicken = JSON.parse(saved);
+                if (chicken.stage === 'adult') {
+                    return '🐔 Clucky is already adult! Go to THE COOP to make your choice (Cook or Let Live)!';}
+                else if (chicken.saved === true) {
+                    return '🐓 Clucky lived a full life! Start a new game in THE COOP to raise another chicken.';}
+                else if (chicken.stage === 'dead') {
+                    return '💀 Clucky is dead. Start a new game in THE COOP.';}
+                chicken.lastFed = Date.now();
+                chicken.hunger = Math.min(100, chicken.hunger + 20);
+                let stageChanged = false;
+                if (chicken.stage === 'egg' && chicken.happiness >= 70) {
+                    chicken.stage = 'chick';
+                    stageChanged = true;}
+                else if (chicken.stage === 'chick' && chicken.hunger >= 100 && chicken.happiness >= 100) {
+                    chicken.stage = 'adult';
+                    stageChanged = true;}
+                localStorage.setItem('chickenState', JSON.stringify(chicken));
+                let message = `🍗 You fed Clucky! Hunger: ${chicken.hunger}% | Happiness: ${chicken.happiness}%`;
+                if (stageChanged && chicken.stage === 'adult') {
+                    message = `🎉 CONGRATULATIONS! 🎉\nClucky grew into an ADULT chicken!\nBoth meters are at 100%!\nGo to THE COOP to make your final choice!`;
+                } else if (stageChanged && chicken.stage === 'chick') {
+                    message = `🐥 Your egg hatched! Clucky is now a baby chick!\nHunger: ${chicken.hunger}% | Happiness: ${chicken.happiness}%`;}
+                return message;}
+            else if (input === 'play') {
+                const saved = localStorage.getItem('chickenState');
+                if (!saved) {
+                    return '❌ No chicken found. Start a game in THE COOP first!';}
+                const chicken = JSON.parse(saved);
+                if (chicken.stage === 'adult') {
+                    return '🐔 Clucky is already adult! Go to THE COOP to make your choice (Cook or Let Live)!';}
+                else if (chicken.saved === true) {
+                    return '🐓 Clucky lived a full life! Start a new game in THE COOP to raise another chicken.';}
+                else if (chicken.stage === 'dead') {
+                    return '💀 Clucky is dead. Start a new game in THE COOP.';}
+                chicken.happiness = Math.min(100, chicken.happiness + 20);
+                let stageChanged = false;
+                if (chicken.stage === 'egg' && chicken.happiness >= 70) {
+                    chicken.stage = 'chick';
+                    stageChanged = true;}
+                else if (chicken.stage === 'chick' && chicken.hunger >= 100 && chicken.happiness >= 100) {
+                    chicken.stage = 'adult';
+                    stageChanged = true;}
+                localStorage.setItem('chickenState', JSON.stringify(chicken));
+                let message = `🐔 You played with Clucky! Hunger: ${chicken.hunger}% | Happiness: ${chicken.happiness}%`;
+                if (stageChanged && chicken.stage === 'adult') {
+                    message = `🎉 CONGRATULATIONS! 🎉\nClucky grew into an adult chicken!\nBoth meters are at 100%!\nGo to THE COOP to make your final choice!`;
+                } else if (stageChanged && chicken.stage === 'chick') {
+                    message = `🐥 Your egg hatched! Clucky is now a baby chick!\nHunger: ${chicken.hunger}% | Happiness: ${chicken.happiness}%`;}
+                return message;}
+            else if (input === 'status') {
+                const saved = localStorage.getItem('chickenState');
+                if (saved) {
+                    const chicken = JSON.parse(saved);
+                    if (chicken.saved === true) {
+                        return `🐓 Clucky lived a full, happy life as a proud rooster!! Chickens Saved: ${localStorage.getItem('chickenSavedCount') || 0}`;
+                    } else if (chicken.stage === 'dead') {
+                        return `💀 Clucky is dead. Start a new game in THE COOP.`;
+                    } else if (chicken.stage === 'adult') {
+                        return `🐔 CLUCKY IS ADULT! Go to THE COOP to make your choice! (Cook or Let Live)`;
+                    } else {
+                        const timeSinceLastFeed = Math.floor((Date.now() - chicken.lastFed) / 1000);
+                        const timeLeft = Math.max(0, 45 - timeSinceLastFeed);
+                        return `🐔 Clucky the ${chicken.stage.toUpperCase()} | Hunger: ${chicken.hunger}% | Happiness: ${chicken.happiness}% | Time to feed: ${timeLeft}s`;}
+                } else {
+                    return `❌ No chicken found. Start a game in THE COOP first!`;}}
+            else if (input === 'solve') {
+                const puzzlesList = [
+                    { encoded: "LIEF LV IXQ", answer: "LIFE IS FUN" },
+                    { encoded: "Ymj fywnj htsyjz yt ymj qjky tk ymj gjxy", answer: "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG" },
+                    { encoded: "IFMMP XPSME", answer: "HELLO WORLD" },
+                    { encoded: "ZPV BSF B XJTTFSE", answer: "YOU ARE A WIZARD" }];
+                let response = "🔓 CRACK THE CODE SOLUTIONS:\n";
+                puzzlesList.forEach((p, i) => {
+                    response += `${i+1}. "${p.encoded}" → "${p.answer}"\n`;});
+                response += "\n💡 Use these to win the Cipher Den game mode!";
+                return response;}
+            else if (input.startsWith('encode ')) {
+                const parts = input.substring(7).trim().split(' ');
+                let shift = 1;
+                let msg = '';
+                if (parts.length > 0 && /^\d+$/.test(parts[0])) {
+                    shift = parseInt(parts[0]);
+                    if (shift < 1) shift = 1;
+                    if (shift > 5) shift = 5;
+                    msg = parts.slice(1).join(' ');
+                } else {
+                    msg = parts.join(' ');}
+                if (msg === '') {
+                    return 'Usage: encode [shift 1-5] [message]  OR  encode [message] (uses shift 1)';}
+                const encoded = msg.split('').map(c => {
+                    if (c.match(/[a-z]/i)) {
+                        const code = c.charCodeAt(0);
+                        const base = code >= 97 ? 97 : 65;
+                        return String.fromCharCode(((code - base + shift) % 26) + base);}
+                    return c;
+                }).join('');
+                return `Encoded (shift ${shift}): "${encoded}"`;}
+            else if (input === 'help') {
+                return 'Available commands: date, time, clear, theme, joke, feed, play, status, solve, encode [1-5] [msg]';}
+            else if (input === '') {
+                return '';}
+            else {
+                return `'${cmd}' is not recognized. Type "help" for available commands.`;}}
+// Listen for storage changes from other pages to sync theme
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'globalTheme' || e.key === 'redThemeUnlocked') {
+                loadGlobalTheme();
+                applyThemeToTerminal();}});
+</script></body></html>

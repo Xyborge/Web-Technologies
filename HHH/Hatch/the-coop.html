@@ -1,45 +1,493 @@
-<!-- Declaration to use HTML5 -->
 <!DOCTYPE html>
-<!-- Declaration for text content is english -->
 <html lang="en">
-<!-- head tag -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE COOP</title>
-<!-- fonts -->
+    <title>THE COOP - Chicken Simulator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">  
-<!-- CSS FILE -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
-</head>
+    <style>
+/* Coop Style */
+        :root {
+            --theme-color: #33ff33;
+            --theme-glow: #33ff33;}
+        .chicken-display {
+            text-align: center;
+            padding: 20px;
+            border: 2px solid var(--theme-color);
+            margin: 20px 0;
+            background: #0a0a0a;}
+        .chicken-icon {
+            font-size: 5rem;
+            filter: drop-shadow(0 0 10px var(--theme-color));
+            margin: 10px 0;}
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;}
+        .stat {
+            flex: 1;
+            min-width: 150px;
+            border: 1px solid var(--theme-color);
+            padding: 10px;
+            background: #050505;}
+        .stat-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            margin-bottom: 8px;
+            color: var(--theme-color);}
+        .stat-bar {
+            height: 20px;
+            background: #1a1a1a;
+            border: 1px solid var(--theme-color);
+            margin: 8px 0;
+            overflow: hidden;}
+        .stat-fill {
+            height: 100%;
+            background: var(--theme-color);
+            width: 0%;
+            transition: width 0.3s ease;}
+/* Action button hide by default */
+        .action-buttons {
+            display: none;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;}
+        .action-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            padding: 12px 20px;
+            background: #0a0a0a;
+            border: 2px solid var(--theme-color);
+            color: var(--theme-color);
+            cursor: pointer;
+            transition: all 0.3s ease;}
+        .action-btn:hover {
+            background: var(--theme-color);
+            color: #000;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--theme-color);}
+/* Choice button hide by default */
+        .choice-buttons {
+            display: none;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;}
+        .choice-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;}
+        .slaughter-btn {
+            background: #0a0a0a;
+            border: 2px solid #ff3366;
+            color: #ff3366;}
+        .slaughter-btn:hover {
+            background: #ff3366;
+            color: #000;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #ff3366;}
+        .oldage-btn {
+            background: #0a0a0a;
+            border: 2px solid #ffaa33;
+            color: #ffaa33;}
+        .oldage-btn:hover {
+            background: #ffaa33;
+            color: #000;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #ffaa33;}
+        .death-counter {
+            color: #ff6699;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.65rem;
+            margin-top: 15px;
+            text-align: center;}
+        .saved-counter {
+            color: #66ff66;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.65rem;
+            margin-top: 5px;
+            text-align: center;}
+        .game-messages {
+            margin-top: 20px;
+            padding: 12px;
+            border: 1px dashed var(--theme-color);
+            min-height: 65px;
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            color: var(--theme-color);
+            background: #071007;}
+        .feed-timer {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid var(--theme-color);
+            background: #0a0a0a;
+            text-align: center;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            color: #ffaa33;
+            display: none;}
+        .feed-timer.visible {
+            display: block;}
+        .start-over {
+            text-align: center;
+            margin-top: 25px;}
+        .start-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.1rem;
+            padding: 15px 30px;
+            background: #0a0a0a;
+            border: 3px solid var(--theme-color);
+            color: var(--theme-color);
+            cursor: pointer;
+            transition: all 0.3s ease;}
+        .start-btn:hover {
+            background: var(--theme-color);
+            color: #000;
+            transform: scale(1.02);
+            box-shadow: 0 0 20px var(--theme-color);}
+        .coop-footer {
+            padding-top: 20px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;}
+        .hatch-footer-link {
+            color: var(--theme-color);
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 0 4px;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            border-bottom: 1px dotted var(--theme-color);}
+        .hatch-footer-link:hover {
+            color: var(--theme-color);
+            text-shadow: 0 0 8px var(--theme-color);}
+        .zone-title, .zone-desc, .banner, .main-title {
+            color: var(--theme-color);}
+        .main-title {
+            text-shadow: 0 0 5px var(--theme-color);}
+        .header, .main-page-tab {
+            border-bottom: none;
+            border-top: none;}
+        .hint-message {
+            color: #ffaa33;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            margin-top: 10px;
+            padding: 8px;
+            border: 1px dashed #ffaa33;
+            background: #0a0a0a;
+            text-align: center;
+            display: none;}
+        .theme-text {
+            color: var(--theme-color);}
+    </style></head>
 <body>
     <div class="container">
-<!-- header (icon removed from here) -->
         <div class="header">
-            <div class="main-title">THE COOP</div>
-            <p class="banner">Main Menu</p></div>
-<!-- main menu start - with icon INSIDE the button -->
-        <div class="zone-card hatch-start" onclick="startGame()">
-            <div class="zone-icon">🐣</div>
-            START </div>
-<!-- about credits and MENU buttons -->
-        <div class="footer">
-<!-- about and credits group -->
-            <div class="about-credit-group">
-                <a onclick="hatchShowAbout()" class="hatch-footer-link">[ ABOUT ]</a>
-                <a onclick="hatchShowCredits()" class="hatch-footer-link">[ CREDITS ]</a></div>
-<!-- MENU returns to main coop screen -->
-            <a onclick="returnToMainMenu()" class="menu-link">[ MENU ]</a>
-        </div>
-        
-<!-- Main page tab at the bottom -->
+            <div class="main-title">🐔 THE COOP</div>
+            <p class="banner">Hatch · Feed · Choose</p></div>
+        <div class="chicken-display">
+            <div class="chicken-icon" id="chickenStage">🥚</div>
+            <div class="zone-title" id="chickenStageText">No Active Game</div>
+            <div class="zone-desc" id="chickenName">Click START to begin</div></div>
+        <div class="stats-container">
+            <div class="stat">
+                <div class="stat-label">🍗 HUNGER</div>
+                <div class="stat-bar">
+                    <div class="stat-fill" id="hungerFill" style="width:0%"></div></div>
+                <div class="stat-label" id="hungerPercent">0%</div></div>
+            <div class="stat">
+                <div class="stat-label">😊 HAPPINESS</div>
+                <div class="stat-bar">
+                    <div class="stat-fill" id="happinessFill" style="width:0%"></div></div>
+                <div class="stat-label" id="happinessPercent">0%</div></div></div>
+        <div class="feed-timer" id="feedTimerDisplay">⏱️ TIME TO FEED: 45s</div>
+        <div class="action-buttons" id="actionButtons">
+            <button class="action-btn" id="feedBtn">🍗 FEED</button>
+            <button class="action-btn" id="playBtn">🎮 PLAY</button></div>        
+        <div class="choice-buttons" id="choiceButtons">
+            <button class="choice-btn slaughter-btn" id="slaughterBtn">🔪 COOK CLUCKY</button>
+            <button class="choice-btn oldage-btn" id="letLiveBtn">👴 LET CLUCKY LIVE</button></div>
+        <div class="death-counter">
+            💀 CHICKENS EATEN: <span id="deathCount">0</span> 💀</div>
+        <div class="saved-counter">
+            👼 CHICKENS SAVED: <span id="savedCount">0</span> 👼</div>
+        <div class="game-messages" id="gameMessages">
+            Press START NEW GAME to begin raising your chicken!</div>
+        <div id="hintArea" class="hint-message"></div>
+        <div class="start-over">
+            <button class="start-btn" id="startGameBtn">🐣 START NEW GAME</button></div>
+        <div class="coop-footer">
+            <a id="aboutBtn" class="hatch-footer-link">[ ABOUT ]</a>
+            <a id="creditsBtn" class="hatch-footer-link">[ CREDITS ]</a></div>
         <div class="main-page-tab">
-            <a onclick="goToMainPage()" class="main-page-link">RETURN TO MAIN WEBSITE</a>
-        </div>
-    </div>
-<!-- JS file -->
+            <a id="mainPageLink" class="main-page-link">← RETURN TO MAIN WEBSITE</a></div></div>
     <script src="../js/main.js"></script>
-</body>
-</html>
+    <script>
+// DOM Elements
+        const chickenStageEl = document.getElementById('chickenStage');
+        const chickenStageTextEl = document.getElementById('chickenStageText');
+        const chickenNameEl = document.getElementById('chickenName');
+        const hungerFillEl = document.getElementById('hungerFill');
+        const happinessFillEl = document.getElementById('happinessFill');
+        const hungerPercentEl = document.getElementById('hungerPercent');
+        const happinessPercentEl = document.getElementById('happinessPercent');
+        const deathCountSpan = document.getElementById('deathCount');
+        const savedCountSpan = document.getElementById('savedCount');
+        const actionButtonsDiv = document.getElementById('actionButtons');
+        const choiceButtonsDiv = document.getElementById('choiceButtons');
+        const feedTimerDiv = document.getElementById('feedTimerDisplay');
+        const gameMessagesDiv = document.getElementById('gameMessages');
+        const hintAreaDiv = document.getElementById('hintArea');
+        let coopTimerInterval = null;
+        let gameActive = false;
+// Update all UI from global chickenState
+        function refreshUI() {
+            const saved = localStorage.getItem('chickenState');
+            if (!saved) {
+                resetToNoGameState();
+                return;}
+            const chicken = JSON.parse(saved);
+            const stageIcons = { egg: '🥚', chick: '🐥', adult: '🐔', dead: '💀' };
+            if (chicken.saved === true) {
+                chickenStageEl.textContent = '🐓';
+                chickenStageTextEl.textContent = 'SAVED';
+            } else {
+                chickenStageEl.textContent = stageIcons[chicken.stage] || '🥚';
+                chickenStageTextEl.textContent = chicken.stage.toUpperCase();}
+            chickenNameEl.textContent = chicken.name;
+            hungerFillEl.style.width = `${chicken.hunger}%`;
+            happinessFillEl.style.width = `${chicken.happiness}%`;
+            hungerPercentEl.textContent = `${chicken.hunger}%`;
+            happinessPercentEl.textContent = `${chicken.happiness}%`;
+            const deathCount = localStorage.getItem('chickenDeathCount') || 0;
+            const savedCount = localStorage.getItem('chickenSavedCount') || 0;
+            deathCountSpan.textContent = deathCount;
+            savedCountSpan.textContent = savedCount;
+// Button visibility based on chicken stage
+            if (chicken.stage === 'adult') {
+                actionButtonsDiv.style.display = 'none';
+                choiceButtonsDiv.style.display = 'flex';
+                if (feedTimerDiv) {
+                    feedTimerDiv.classList.add('visible');
+                    feedTimerDiv.innerHTML = '🐔 MAKE YOUR CHOICE 🐔';
+                    feedTimerDiv.style.color = '#33ff33';}
+                gameActive = false;
+                stopCoopTimer();
+            } else if (chicken.stage === 'dead' || chicken.saved === true) {
+                actionButtonsDiv.style.display = 'none';
+                choiceButtonsDiv.style.display = 'none';
+                if (feedTimerDiv) {
+                    feedTimerDiv.classList.add('visible');
+                    feedTimerDiv.innerHTML = chicken.saved ? '🐓 LIVED FULL LIFE 🐓' : '💀 GAME OVER 💀';
+                    feedTimerDiv.style.color = '#ff6666';}
+                gameActive = false;
+                stopCoopTimer();
+            } else if (chicken.stage === 'egg' || chicken.stage === 'chick') {
+                actionButtonsDiv.style.display = 'flex';
+                choiceButtonsDiv.style.display = 'none';
+                if (feedTimerDiv) {
+                    feedTimerDiv.classList.add('visible');}
+                startCoopTimer();
+            } else {
+                actionButtonsDiv.style.display = 'none';
+                choiceButtonsDiv.style.display = 'none';}}
+// Update counters only
+        function updateCountersOnly() {
+            const deathCount = localStorage.getItem('chickenDeathCount') || 0;
+            const savedCount = localStorage.getItem('chickenSavedCount') || 0;
+            deathCountSpan.textContent = deathCount;
+            savedCountSpan.textContent = savedCount;}
+// Apply global theme to COOP
+        function applyGlobalThemeToCoop() {
+            loadGlobalTheme();
+            applyGlobalTheme();}
+// Stop the timer
+        function stopCoopTimer() {
+            if (coopTimerInterval) {
+                clearInterval(coopTimerInterval);
+                coopTimerInterval = null;}}
+// Start the timer for active game
+        function startCoopTimer() {
+            stopCoopTimer();
+            const saved = localStorage.getItem('chickenState');
+            if (!saved) return;
+            const chicken = JSON.parse(saved);
+            if (chicken.stage !== 'egg' && chicken.stage !== 'chick') return;
+            coopTimerInterval = setInterval(() => {
+                const freshSaved = localStorage.getItem('chickenState');
+                if (!freshSaved) return;
+                const freshChicken = JSON.parse(freshSaved);
+                if (freshChicken.stage === 'adult' || freshChicken.stage === 'dead' || freshChicken.saved === true) {
+                    stopCoopTimer();
+                    refreshUI();
+                    return;}
+                const now = Date.now();
+                const secondsSinceLastFeed = Math.floor((now - (freshChicken.lastFed || now)) / 1000);
+                const timeLeft = Math.max(0, 45 - secondsSinceLastFeed);
+                if (feedTimerDiv) {
+                    if (timeLeft <= 5 && timeLeft > 0) {
+                        feedTimerDiv.style.color = '#ff6666';
+                        feedTimerDiv.innerHTML = `⚠️ STARVING! FEED WITHIN ${timeLeft}s ⚠️`;
+                    } else if (timeLeft > 0) {
+                        feedTimerDiv.style.color = '#ffaa33';
+                        feedTimerDiv.innerHTML = `⏱️ TIME TO FEED: ${timeLeft}s`;
+                    } else if (timeLeft === 0) {
+                        feedTimerDiv.innerHTML = '💀 STARVING...';}}
+                if (secondsSinceLastFeed >= 45 && freshChicken.stage !== 'adult' && freshChicken.stage !== 'dead' && freshChicken.saved !== true) {
+                    stopCoopTimer();
+                    let deathCount = parseInt(localStorage.getItem('chickenDeathCount') || '0') + 1;
+                    localStorage.setItem('chickenDeathCount', deathCount);
+                    freshChicken.stage = 'dead';
+                    freshChicken.saved = false;
+                    localStorage.setItem('chickenState', JSON.stringify(freshChicken));
+                    refreshUI();
+                    if (gameMessagesDiv) gameMessagesDiv.innerHTML = '<span style="color:#ff6666">You forgot to feed Clucky for 45 seconds! It has starved to death. Press START NEW GAME to try again.</span>';
+                    if (feedTimerDiv) {
+                        feedTimerDiv.innerHTML = '💀 STARVED TO DEATH 💀';
+                        feedTimerDiv.style.color = '#ff6666';}
+                    gameActive = false;}
+            }, 500);}
+        function resetToNoGameState() {
+            chickenStageEl.textContent = '🥚';
+            chickenStageTextEl.textContent = 'NO ACTIVE GAME';
+            chickenNameEl.textContent = 'Click START to begin';
+            hungerFillEl.style.width = '0%';
+            happinessFillEl.style.width = '0%';
+            hungerPercentEl.textContent = '0%';
+            happinessPercentEl.textContent = '0%';
+            actionButtonsDiv.style.display = 'none';
+            choiceButtonsDiv.style.display = 'none';
+            feedTimerDiv.classList.remove('visible');
+            hintAreaDiv.style.display = 'none';
+            hintAreaDiv.innerHTML = '';
+            gameMessagesDiv.innerHTML = ' Press START NEW GAME to begin raising your chicken!';
+            gameActive = false;
+            stopCoopTimer();}
+        function startNewGame() {
+            stopCoopTimer();
+            if (typeof startGame === 'function') {
+                startGame();
+            } else {
+                const newChicken = {
+                    stage: 'egg',
+                    name: 'Clucky',
+                    hunger: 50,
+                    happiness: 50,
+                    lastFed: Date.now(),
+                    saved: false};
+                localStorage.setItem('chickenState', JSON.stringify(newChicken));}
+            refreshUI();
+            gameMessagesDiv.innerHTML = '<span style="color:#aaffaa">✨ Your egg has arrived! Feed within 45 seconds to keep it alive! ✨</span>';
+            hintAreaDiv.style.display = 'none';
+            hintAreaDiv.innerHTML = '';
+            gameActive = true;}
+        function feedChickenWrapper() {
+            const saved = localStorage.getItem('chickenState');
+            if (!saved) {
+                gameMessagesDiv.innerHTML = '<span style="color:#ffaa66">⚠️ No active game! Click START NEW GAME first! ⚠️</span>';
+                return;}
+            const chicken = JSON.parse(saved);
+            if (chicken.stage === 'dead') {
+                gameMessagesDiv.innerHTML = '<span style="color:#ffaa66">💀 Clucky is dead. Click START NEW GAME.</span>';
+                return;}
+            if (chicken.saved === true) {
+                gameMessagesDiv.innerHTML = '<span style="color:#ffaa66">🐓 Clucky lived a full life! Click START NEW GAME.</span>';
+                return;}
+            if (chicken.stage === 'adult') {
+                gameMessagesDiv.innerHTML = '<span style="color:#ffaa66">🐔 Clucky is an adult! Make your choice (Cook or Let Live).</span>';
+                return;}
+            if (typeof feedChicken === 'function') {
+                feedChicken();}
+            setTimeout(() => {
+                refreshUI();
+            }, 50);}
+        function playWithChickenWrapper() {
+            const saved = localStorage.getItem('chickenState');
+            if (!saved) {
+                gameMessagesDiv.innerHTML = '<span style="color:#ffaa66">⚠️ No active game! Click START NEW GAME first! ⚠️</span>';
+                return;}
+            const chicken = JSON.parse(saved);
+            if (chicken.stage === 'dead') {
+                gameMessagesDiv.innerHTML = '<span style="color:#ffaa66">💀 Clucky is dead. Click START NEW GAME.</span>';
+                return;}
+            if (chicken.saved === true) {
+                gameMessagesDiv.innerHTML = '<span style="color:#ffaa66">🐓 Clucky lived a full life! Click START NEW GAME.</span>';
+                return;}
+            if (chicken.stage === 'adult') {
+                gameMessagesDiv.innerHTML = '<span style="color:#ffaa66">🐔 Clucky is an adult! Make your choice (Cook or Let Live).</span>';
+                return;}
+            if (typeof playWithChicken === 'function') {
+                playWithChicken();}
+            setTimeout(() => {
+                refreshUI();
+            }, 50);}
+        function makeChoiceWrapper(choice) {
+            if (typeof makeChoice === 'function') {
+                makeChoice(choice);}
+            setTimeout(() => {
+                refreshUI();
+                stopCoopTimer();
+                const themeColor = THEMES[currentGlobalTheme] ? THEMES[currentGlobalTheme].primaryColor : '#33ff33';
+                hintAreaDiv.style.display = 'block';
+                if (choice === 'slaughter') {
+                    hintAreaDiv.innerHTML = `💡 <span style="color:${themeColor}">HINT:</span> Try "date" or "joke" in the TERMINAL zone!`;
+                } else {
+                    hintAreaDiv.innerHTML = `🐔 <span style="color:${themeColor}">HINT:</span> Try "theme" command to change colors across ALL zones!`;}
+                gameActive = false;
+            }, 50);}
+        function goToMainPage() {
+            stopCoopTimer();
+            window.location.href = '../index.html';}
+        function hatchShowAbout() {
+            alert('🐔 THE COOP - Chicken Simulator 🐔\n\n1. Click START NEW GAME\n2. Feed to increase HUNGER\n3. Play to increase HAPPINESS\n4. Both must reach 100% to become ADULT\n5. As adult, choose: COOK or LET LIVE\n\nConnected to TERMINAL: type "feed" or "play" there too!');}
+        function hatchShowCredits() {
+            alert('Created for Web Technologies coursework\nFonts: Press Start 2P, VT323\nGlobal theme sync across all zones\n45-second feed timer - don\'t let Clucky starve!');}
+        function initPage() {
+            loadGlobalTheme();
+            applyGlobalThemeToCoop();
+            updateCountersOnly();
+            const saved = localStorage.getItem('chickenState');
+            if (saved) {
+                const chicken = JSON.parse(saved);
+                refreshUI();
+                if (chicken.stage === 'egg' || chicken.stage === 'chick') {
+                    gameActive = true;
+                    gameMessagesDiv.innerHTML = '<span style="color:#aaffaa">🐔 Welcome back! Continue raising your chicken!</span>';
+                } else if (chicken.stage === 'adult') {
+                    gameMessagesDiv.innerHTML = '<span style="color:#ffaa33">🐔 Your chicken is an adult! Make your choice above (Cook or Let Live).</span>';
+                } else if (chicken.stage === 'dead') {
+                    gameMessagesDiv.innerHTML = '<span style="color:#ff6666">💀 Your chicken has died. Click START NEW GAME to try again.</span>';
+                } else if (chicken.saved === true) {
+                    gameMessagesDiv.innerHTML = '<span style="color:#88ff88">🐓 Clucky lived a full, happy life! Click START NEW GAME to raise another chicken.</span>';}
+                return;}
+            resetToNoGameState();}
+// Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            initPage();
+            document.getElementById('startGameBtn').addEventListener('click', startNewGame);
+            document.getElementById('feedBtn').addEventListener('click', feedChickenWrapper);
+            document.getElementById('playBtn').addEventListener('click', playWithChickenWrapper);
+            document.getElementById('slaughterBtn').addEventListener('click', () => makeChoiceWrapper('slaughter'));
+            document.getElementById('letLiveBtn').addEventListener('click', () => makeChoiceWrapper('old'));
+            document.getElementById('aboutBtn').addEventListener('click', hatchShowAbout);
+            document.getElementById('creditsBtn').addEventListener('click', hatchShowCredits);
+            document.getElementById('mainPageLink').addEventListener('click', goToMainPage);});
+//Listen for storage changes from other pages to sync theme
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'chickenState') {
+                refreshUI();}
+            if (e.key === 'globalTheme' || e.key === 'redThemeUnlocked') {
+                loadGlobalTheme();
+                applyGlobalThemeToCoop();}});
+</script></body></html>
